@@ -1,0 +1,369 @@
+How to Search for Text within Files and Folders in Linux
+
+grep -rnw '/path' -e 'text'
+-r recursively
+-n Line number
+-w word/Regexp Pattern
+List the contents of a directory
+ls -l /ll
+ Which unix version 
+Uname -a
+List of process with open file
+lsof
+1)Disk Usage
+ 
+df -h [Disk Free]
+du -sh [Disk usage as per directory level]
+du -k|sort -nr|more [Find out files utilizing highest disk space]
+ 
+2) CPU usage
+a) top [Shift+P ] for CPU sort
+b) Take snapshot of Top top -n1 > out.txt
+ 
+Uptime
+What are system load averages? It is the average number of processes that are in a runnable or uninterruptible state. A process is in a runnable state when it is using the CPU or waiting to use the CPU; while a process is in an uninterruptible state when it is waiting for I/O access like waiting for a disk.
+
+3) Memory Usage
+top [Shift+M] to sort by memory
+free
+ 
+4) File reading and substitute
+1) read file by line 1 to 10 [sed -n 1,10p test.txt]
+by default sed prints the pattern buffer after executing its commands. There are reasons, as you will see; the command allows you to specifically control what is printed to stdout. Usually when p is used you will use the -n option to suppress the the default printing that happens as part of the standard sed flow. Otherwise, when execute p (print) as one of the commands, the line will be printed twice. 
+Read 10 to 20th line
+Head -20 file.txt|tail -10
+2) read x% lines ,ex every 3rd line
+        	sed -n 'n;n;p;' test.txt
+        	awk '!(NR%3)' ]
+ 
+bash
+ 
+#!/usr/bin/bash
+ 
+x=0
+while read line
+do
+   ((x++))
+   [ $x -eq 3 ] && { echo $line ; x=0;}
+done < file
+ 
+ 
+3) Read xth column ex 1st,2nd and 3rd column
+        	awk {print $1,$2,$3}
+        	cut -d '|' -f 1,2,3 test.txt
+ 
+4) Replace a word with another word
+  	sed 's/Linux/Linux-Unix/' test.txt [Replace 1st occurrence]
+  	sed 's/Linux/Linux-Unix/g' test.txt [Replace all occurrence]
+ 
+5) Print lines in record file where no if columns !=5 for each line
+        	awk 'BEGIN {FS ="|"};{if(NF !=5)print NR,"-->",NF}' name.txt
+ 
+6) Sort a file and find unique
+        	sort music.txt |uniq -d [-d duplicate -c count]
+Unsorted uniq
+https://blog.jpalardy.com/posts/unsorted-uniq/
+ 
+7) Check process statistics for a PID & Parentid
+        	ps -aux
+For with Auk
+https://linuxhint.com/for_loop_awk_command/
+
+8)networking commands
+ 
+finding host/domain name and IP address - hostname
+test network connection – ping
+getting network configuration – ifconfig
+Network connections, routing tables, interface statistics – netstat
+query DNS lookup name – nslookup
+communicate with another hostname – telnet
+outing steps that packets take to get to network host – traceroute
+view user information – finger
+checking status of destination host - telnet
+9) zipgrep & zgrep
+The zipgrep command is used to search for patterns within a zip file that has multiple files
+The zgrep command lets you search the contents of a compressed file without extracting the contents first.
+https://www.cyberciti.biz/howto/question/general/compress-file-unix-linux-cheat-sheet.php#:~:text=Both%20Linux%20and%20UNIX%20include,%2Dd)%2C%20unzip%20commands.
+Run a Command or Shell-Script Even after You Log Out
+# nohup command-with-options &
+bg 
+bg jobID
+bg jobID1 jobID2 ... jobIDN
+Diff and comm and cmp
+ file1.txt 
+Apaar 
+Ayush Rajput
+Deepak
+Hemant
+file2.txt 
+Apaar
+Hemant
+Lucky
+Pranjal Thakral
+
+diff file1.txt file2.txt 
+1,3c1
+< Apaar 
+< Ayush Rajput
+< Deepak
+---
+> Apaar
+4a3,4
+> Lucky
+> Pranjal Thakral
+Hav comm file1.txt file2.txt 
+
+-1
+suppress lines unique to file1.
+-2
+suppress lines unique to file2.
+-3
+suppress lines that appear in both files.
+
+
+	Apaar
+Apaar 
+Ayush Rajput
+Deepak
+		Hemant
+	Lucky
+	Pranjal Thakral
+
+
+
+Shell Scripting
+ 
+1)How to pass arguments in a shell script
+ 
+a) by using shell built in parameters
+$1-$9
+Represent positional parameters for arguments one to nine
+${10}-${n}
+Represent positional parameters for arguments after nine
+$0
+Represent name of the script
+$∗
+Represent all the arguments as a single string
+$@
+Same as $∗, but differ when enclosed in (")
+$#
+Represent total number of arguments
+$$
+PID of the script
+$?
+Represent last return code
+
+ 
+b) by using getopts
+ 
+while getopts ":ht" opt; do
+  case ${opt} in
+	h ) # process option h
+  	;;
+	t ) # process option t
+  	;;
+	\? ) echo "Usage: cmd [-h] [-t]"
+  	;;
+  esac
+done
+https://www.shellscript.sh/tips/getopts/
+
+2)What are shebang : absolute path to the Bash interpreter using #! [#! /bin/sh]
+3) how do you connect to a db from unix shell [isql]
+4) how to make shell script wait for 5mins [sleep 5m]
+5) How to check if file exists and not 0 byte
+#!/bin/bash
+file="/.config/backup.cfg"
+if [ ! -s "$file" ]
+then
+	echo "$0: File '${file}' not found."
+fi
+ 
+-s file exists and not empty
+-f file exists and not directory
+-d directory exists
+-x file is executable
+-w file is writable
+-f file is readable
+
+
+Display Month of a date
+ 
+D="2013/01/17"
+DAY=$(date -d "$D" '+%d')
+MONTH=$(date -d "$D" '+%m')
+YEAR=$(date -d "$D" '+%Y')
+
+echo "Day: $DAY"
+echo "Month: $MONTH"
+echo "Year: $YEAR"
+
+Display the last word in every line of a file
+This one is pretty easy if you know the meaning of $NF. I came across this many years ago when I was building scripts entirely in awk.
+awk '{print $NF}
+awk -F: '{print $NF}'
+
+Reverse the file
+Cut 1st column
+
+Cut -f $
+
+NF for awk represents the number of fields (e.g., 5), so $NF then represents the value of the rightmost field (e.g., $5).
+If you want to print some other word relative to the end of each line, you can still use NF as an anchor for your field selection. In this command, we 
+select the next to last field by using NF-1.
+
+A BEGIN rule is executed once only, before the first input record is read. Likewise, an END rule is executed once only, after all the input is read.
+
+
+Remove the Nth line line of a file
+Removing a particular line from a file is a trick that sed handles easily. Assume numbers is a file with the numbers 1 through 11, one number per line. Using the command shown below, line 7 will disappear. The "7 d" command tells sed to remove the 7th line.
+$ sed -i '7 d' numbers
+$ cat numbers
+1
+2
+3
+4
+5
+6
+8
+9
+10
+11
+You can remove a sequence of lines by putting a range in place of the 7. The command sed -i '7,9 d' numbers removes lines 7 through 9.
+
+Remove blank lines from a file
+There are several ways to remove blank lines from a file. One of the easiest is to use sed. In the command below, we use ^$ to represent a blank line. We do this because ^ represents the start of a line and $ represents the end of a line, so a line with a start and an end with nothing between is blank (as opposed to a line containing a sequence of blanks).
+$ cat strings
+This is the last day
+of your life thus far
+
+Mr. Logic
+$ sed -i '/^$/d' strings
+$ cat strings
+This is the last day
+of your life thus far
+Mr. Logic
+
+grep -v '^$' myfile
+
+
+You can also use an awk command like the one shown below. This will also display the text and ignore the blank lines but, like the grep command shown above, it won't change the original file. This works because $0 represents all of the words on the line (i.e., the entire line). You'd have to redirect the output if you want to store it as a new file.
+$ awk '$0' strings
+
+Find symbolic links
+Finding symbolic links on a Unix system is easy because the find command has an option for finding files by type. The type for a symbolic link is "l" just like the first letter that you see in a long listing for one of these files.
+$ find . -type l -ls
+
+Determine the architecture (32 or 64 bit) of your system
+This one's very easy. Use the arch command and you should see something like this:
+$ arch
+i686
+Uname- m
+
+Reverse a string
+The rev command reverses a string completely -- one letter at a time. You can pipe text to it like this:
+$ echo "dlroW ,olleH" | rev
+Hello, World
+Reverse a file: tac
+
+
+Count how many time a word appears in a file
+This is trickier than it might first appear. For one thing, a word might be part of another word -- such as "the" being part of "there". For another, a word might appear more than once on a line. Will your command count each instance or just count the line as one hit? You can use grep -c "word" filename command, but it 's basically doing the same thing as grep word filename. It will only tell you how many lines the word appears on, not how many times the word appears as we see here:
+$ cat words
+the the the the the then there they
+$ grep -c the words
+1
+Shell
+#!/bin/bash
+count=0
+look4=$1
+file=$2
+
+for word in `cat $file`
+do
+  if [ $word == "$look4" ]; then
+    ((count++))
+  fi
+done
+echo $count
+Grep
+grep -o 'the' words.txt |wc -l
+grep -o '\bUnix\b' file | wc -l
+rep's -o will only output the matches, ignoring lines; wc can count them:
+grep -o 'needle' file | wc -l
+This will also match 'needles' or 'multineedle'.
+To match only single words use one of the following commands:
+grep -ow 'needle' file | wc -l grep -o '\bneedle\b' file | wc -l grep -o '\<needle\>' file | wc -l
+
+
+tr
+tr -s " " "\n" < file | grep -c the
+awk '/the/{x++}END{print x}' RS=" "  file
+
+
+
+Replace all instances of a word with another word
+For many such tasks, I will use a simple command like this one:
+sed s/this/that/g filename
+
+That will often work, but it will change any instance of "this" to "that" whether or not the instances of "this" are words or parts of words such as "thistle". You can get really complicated with sed commands that are particular about the context in which the words they are out to change appear. Here's an example which is a bit more complicated. It uses the \b (word boundary) marker to ensure we only change "the" to "why" when it's an entire word.
+$ cat words
+the the the the the then there they
+$ sed -e 's/\bthe\b/why/g' words
+why why why why why then there they
+if you want to change "The" as well as "the", you can add the "ignore case" (i) option to your sed command.
+$ sed -e 's/\bthe\b/why/g' words
+The why why why why then there they
+$ sed -e 's/\bthe\b/why/gi' words
+why why why why why then there they
+Make a variable available from a subshell
+Subshells won't recognize variables that you set up in the shell unless you export them.
+$ cat showme
+#!/bin/bash
+
+echo $something
+
+$ something="well done"
+$ ./showme
+
+$ export something
+$ ./showme
+well done
+View swap space available and in use
+Virtual memory is a combination of RAM and disk space that running processes can use. Swap space is the portion of virtual memory that is on the hard disk, used when RAM is full.
+
+The swapon command can list your swap partitions and files.
+$ swapon -s
+Filename                                Type            Size    Used    Priority
+/dev/cciss/c0d0p3                       partition       4192956 41152   -1
+
+On Solaris systems, use the swap -l command.
+# swap -l
+swapfile             dev  swaplo blocks   free
+/dev/dsk/c0t2d0s1   136,1      16 4177904 4177904?
+Validate the input if its Integer or not
+
+# Asking the user to enter an input
+echo "Enter an input"
+
+# reading and storing input
+read variable
+
+# Applying the approach given above
+
+case ${variable#[-+]} in
+  *[!0-9]* | '') echo "Not an integer" ;;
+  * ) echo "Valid integer number" ;;
+esac
+
+Call Rest API from Unix 
+
+
+curl -X GET "https://age-of-empires-2-api.herokuapp.com/api/v1/unit/Samurai" -H "accept: application/json"
+
+Count how many times words appear in a file
+
+awk -- '{for (i = 1; i <= NF; i++) wc[$i] += 1}; END {for (w in wc) print w, wc[w]}' <file> | sort
+
+cat Spider.txt | tr ' ' '\n'|sort |uniq -c|sort -nr
+
