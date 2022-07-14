@@ -1,0 +1,192 @@
+git init: Create a new repo in this folder. 
+https://medium.com/@lucasmaurer/git-gud-the-working-tree-staging-area-and-local-repo-a1f0f4822018
+
+Working Directory : Local drive
+The Working Tree is the area where you are currently working. It is where your files live. This area is also known as the “untracked” area of git. 
+
+Staged or Index
+The Staging Area is when git starts tracking and saving changes that occur in files. These saved changes reflect in the .git directory
+
+Local Repo
+
+The Local Repository is everything in your .git directory. Mainly what you will see in your Local Repository are all of your checkpoints or commits. It is the area that saves everything (so don’t delete it).
+
+Remote Repo
+A remote repository in Git, also called a remote, is a Git repository that’s hosted on the Internet or another network
+
+Configuring git
+git config --global user.name "Santanu Ghosal"
+git config --global user.email "ghosalsantanuit@gmail.com"
+
+git config --list
+
+.gitignore
+A gitignore file specifies intentionally untracked files that Git should ignore. Files already tracked by Git are not affected; 
+
+Basic File Operations
+ 
+diff 
+diff is used to find differences between two files. On its own, it’s a bit hard to use; instead, use it with diff -u to find lines which differ in two files:
+
+Patch
+Patch is useful for applying file differences. See the below example, which compares two files. The comparison is saved as a .diff file, which is then patched to the original file!
+
+diff -u : diff -u is used to compare two files, line by line, and have the differing lines compared side-by-side in the same output
+
+git commit -a :Stages files automatically
+
+Log to check what has changed in commits
+
+git log -p:Produces patch text
+git log --oneline : Shows info in one line
+git log -n 3 : Specific number of commits
+git log --author="John Smith"  : Find by author
+git log --committer="John smith" : Find by comment
+git log --after="2019-3-2"
+git log --before="yesterday"
+git log -- main.py
+
+git log --graph --oneline --all
+
+
+Undo Changes
+
+From working area : Not added to staged.
+git checkout <file> Reverts the change if not added to staging.
+
+From Staging Area : Not committed
+
+git restore --staged <file>  : to restore from staged.
+git reset HEAD <file> : Same purpose
+ Same 
+
+From Commit/Index area
+
+git reset HEAD~1 : Remove recent change from commit to working directory
+Then do git checkout <file>
+
+
+-soft
+               Does not touch the index file or the working tree at all (but resets the
+               head to <commit>, just like all modes do). This leaves all your changed
+               files "Changes to be committed", as git status would put it.
+
+           --mixed
+               Resets the index but not the working tree (i.e., the changed files are
+               preserved but not marked for commit) and reports what has not been updated.
+               This is the default action.
+
+               If -N is specified, removed paths are marked as intent-to-add (see git-
+               add(1)).
+
+           --hard
+               Resets the index and working tree. Any changes to tracked files in the
+               working tree since <commit> are discarded.
+
+           --merge
+               Resets the index and updates the files in the working tree that are
+               different between <commit> and HEAD, but keeps those which are different
+               between the index and working tree (i.e. which have changes which have not
+               been added). If a file that is different between <commit> and the index has
+               unstaged changes, reset is aborted.
+
+
+Remote
+*configure ssh with git : https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+
+Git remote -v : Shows remote repo config
+git remote show <remote> : Shows details on remote
+
+git log origin/main --oneline :Shows origin commit logs. If origin is behind or ahead of local, it can be tracked with header data
+
+(HEAD -> main, origin/main)
+
+git fetch : Fetches the change from remote but doesnt merge
+If there is a change, git log show show the details and show the location of headers in different commits
+
+git merge <remote> git merge origin/main
+Merges the change. 
+
+Alternatively git pull can be utilized.(fetch+ merge)
+
+git checkout <branch> Setup local branch to track origin branch from remote.
+git checkout -b <branch> : Creates a new branch and switches to it.
+
+git branch
+* experiment
+  main
+
+
+git checkout main
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+> git checkout experiment
+Switched to branch 'experiment'
+Your branch is up to date with 'origin/experiment'.
+
+git rebase <main/master>
+
+Puts all current commits from current branch on top of main
+
+
+=======================================
+
+
+Delete branch from remote/local
+Remote 
+> git push -d origin optimize
+To github.com:ghosas/pytest.git
+ - [deleted]         optimize
+Local
+> git branch -d optimize
+Deleted branch optimize (was ba4a431).
+
+
+ 
+git show: Shows various objects
+git diff : Is similar to the Linux `diff` command, and can show the differences in various commits
+git diff --staged : An alias to --cached, this will show all staged files compared to the named commit
+git add -p : Allows a user to interactively review patches to add to the current commit
+git mv : Similar to the Linux `mv` command, this moves a file
+git rm : Similar to the Linux `rm` command, this deletes, or removes a file
+
+git checkout is effectively used to switch branches.
+
+git reset basically resets the repo, throwing away some changes. It’s somewhat difficult to understand, so reading the examples in the documentation may be a bit more useful.
+
+git restore <file> : Restore file in local area || git checkout <file>
+git restore --staged <file> : To restore staged file.
+
+git commit --amend is used to make changes to commits after-the-fact, which can be useful for making notes about a given commit.
+
+git revert HEAD makes a new commit which effectively rolls back a previous commit. It’s a bit like an undo command.
+
+Branching
+
+git branch : Used to manage branches
+git branch <name> 
+Creates the branch
+
+git branch -d <name> :Deletes the branch
+git branch -D <name>
+Forcibly deletes the branch
+git checkout <branch>  : Switches to a branch.
+
+git merge <branch>  :Merge joins branches together. 
+git merge --abort
+If there are merge conflicts (meaning files are incompatible), --abort can be used to abort the merge action.
+
+git log --graph --oneline : This shows a summarized view of the commit history for a repo.
+
+git clone URL : Git clone is used to clone a remote repository into a local workspace
+git push:Git push is used to push commits from your local repo to a remote repo
+git pull: Git pull is used to fetch the newest updates from a remote repository
+
+
+git remote : Lists remote repos
+git remote -v : List remote repos verbosely
+git remote show <name> :Describes a single remote repo
+git remote update :Fetches the most up-to-date objects
+git fetch : Downloads specific objects
+git branch -r :Lists remote branches; can be combined with other branch arguments to manage remote branches
+
