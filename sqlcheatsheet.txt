@@ -1,0 +1,219 @@
+The five critical differences of SQL vs NoSQL:
+SQL databases are relational, NoSQL are non-relational.
+SQL databases use structured query language and have a predefined schema. NoSQL databases have dynamic schemas for unstructured data.
+SQL databases are vertically scalable, NoSQL databases are horizontally scalable.
+SQL databases are table based, while NoSQL databases are document, key-value, graph or wide-column stores.
+SQL databases are better for multi-row transactions, NoSQL are better for unstructured data like documents or JSON.
+SQL databases: SQL databases use structured query language (SQL) for defining and manipulating data. On one hand, this is extremely powerful: SQL is one of the most versatile and widely-used options available, making it a safe choice and especially great for complex queries. On the other hand, it can be restrictive. SQL requires that you use predefined schemas to determine the structure of your data before you work with it. In addition, all of your data must follow the same structure. This can require significant up-front preparation, and, as with Town A, it can mean that a change in the structure would be both difficult and disruptive to your whole system.
+NoSQL databases: NoSQL databases, on the other hand, have dynamic schemas for unstructured data, and data is stored in many ways: They can be column-oriented, document-oriented, graph-based or organised as a KeyValue store. This flexibility means that:
+You can create documents without having to first define their structure
+Each document can have its own unique structure
+The syntax can vary from database to database, and
+You can add fields as you go.
+The Scalability
+In most situations, SQL databases are vertically scalable, which means that you can increase the load on a single server by increasing things like CPU, RAM or SSD. NoSQL databases, on the other hand, are horizontally scalable. This means that you handle more traffic by sharding, or adding more servers in your NoSQL database. It’s like adding more floors to the same building versus adding more buildings to the neighbourhood. The latter can ultimately become larger and more powerful, making NoSQL databases the preferred choice for large or ever-changing data sets.
+The Structure
+SQL databases are table-based, while NoSQL databases are either document-based, key-value pairs, graph databases or wide-column stores. This makes relational SQL databases a better option for applications that require multi-row transactions - such as an accounting system - or for legacy systems that were built for a relational structure.
+Some examples of SQL databases include MySQL, Oracle, PostgreSQL, and Microsoft SQL Server. NoSQL database examples include MongoDB, BigTable, Redis, RavenDB Cassandra, HBase, Neo4j and CouchDB.
+
+SQL
+Get highest Salary,2nd Highest Salary,Nth Highest Salary
+1) Using nested Loop
+SELECT TOP 1 salary FROM (
+   SELECT TOP 3 salary
+   FROM employees
+   ORDER BY salary DESC) AS emp
+ORDER BY salary ASC
+
+ 
+SELECT MIN(salary)
+FROM  employees
+WHERE salary IN(SELECT TOP 3 salary FROM employees ORDER BY employees DESC)
+
+ 
+Rank/ Dense Rank
+SELECT salary,EmpName
+FROM
+(
+SELECT salary,EmpName,DENSE_RANK() OVER(ORDER BY Salary DESC) Rno from employees
+) tbl
+WHERE Rno=3
+
+2) Swap Columns Male and Female using single query
+ 
+UPDATE tableA
+   SET Gender = CASE 
+            	WHEN Gender = 'Male' THEN 'Female' 
+            	ELSE 'Male' 
+            	END
+
+3)Conditional Counting
+Get count of people > 40K sal, < 40 K sal and =40K sal
+select count(*),'salgt55' from empdata
+where salary > 55000
+union
+select count(*),'sallt55' from empdata
+where salary < 55000
+union 
+select count(*),'saleq55' from empdata
+where salary = 55000;
+
+
+select
+count(case when salary > 40000 then 1 end) as salgt40,
+count(case when salary < 40000 then 1 end) as sallt40,
+count(case when salary = 40000 then 1 end) as sal40
+from employees
+
+6)How to create empty tables with the same structure as another table?
+SELECT * INTO Students_copy
+FROM Students WHERE 1 = 2;
+
+
+7)Write a Query to get Unique names of employees without using the DISTINCT keyword.
+Select  name
+from employees
+group by  name
+
+How to store image in oracle
+CREATE TABLE employee_photos(
+  employee_id        NUMBER,
+  employee_thumbnail BLOB);
+
+CREATE TABLE lob_table (id NUMBER, doc BLOB);
+INSERT INTO lob_table VALUES (1, EMPTY_BLOB()); 
+
+Load an external file into the table:
+DECLARE
+  src_lob  BFILE := BFILENAME('MY_DIR', '/tmp/me.gif');
+  dest_lob BLOB;
+BEGIN
+  INSERT INTO lob_table VALUES(2, EMPTY_BLOB())
+     RETURNING doc INTO dest_lob;
+
+  DBMS_LOB.OPEN(src_lob, DBMS_LOB.LOB_READONLY);
+  DBMS_LOB.LoadFromFile( DEST_LOB => dest_lob,
+                         SRC_LOB  => src_lob,
+                         AMOUNT   => DBMS_LOB.GETLENGTH(src_lob) );
+  DBMS_LOB.CLOSE(src_lob);
+
+  COMMIT;
+END;
+/
+
+
+Theory
+
+What is the difference between ‘HAVING’ CLAUSE and a ‘WHERE’ CLAUSE?
+HAVING clause can be used only with a SELECT statement. It is usually used in a GROUP BY clause and whenever GROUP BY is not used, HAVING behaves like a WHERE clause.
+Having Clause is only used with the GROUP BY function in a query whereas WHERE Clause is applied to each row before they are a part of the GROUP BY function in a query.
+Can you execute a sql with having clause and not where clause: Yes
+Difference Between TRUNCATE, DELETE And DROP In SQL
+ 
+The difference between TRUNCATE, DELETE, and DROP is one of the most common interview questions. TRUNCATE, DELETE, and DROP SQL queries are often used in SQL Server to delete data from a database. Learn the difference between truncate and delete in SQL.
+ 
+TRUNCATE
+ 
+TRUNCATE SQL query removes all rows from a table, without logging the individual row deletions. TRUNCATE is faster than the DELETE query.
+ 
+The following example removes all data from the Customers table. 
+TRUNCATE TABLE Customers;   
+TRUNCATE is a DDL command
+TRUNCATE is executed using a table lock and the whole table is locked to remove all records.
+We cannot use the WHERE clause with TRUNCATE.
+TRUNCATE removes all rows from a table.
+Minimal logging in the transaction log, so it is faster performance-wise.
+TRUNCATE TABLE removes the data by deallocating the data pages used to store the table data and records only the page deallocations in the transaction log.
+Identify the column is reset to its seed value if the table contains an identity column.
+To use Truncate on a table you need at least ALTER permission on the table.
+Truncate uses less transaction space than the Delete statement.
+Truncate cannot be used with indexed views.
+TRUNCATE is faster than DELETE.
+DELETE
+ 
+SQL DELETE query deletes all records from a database table. To execute a DELETE query, delete permissions are required on the target table. If you need to use a WHERE clause in a DELETE, select permissions are required as well.
+ 
+The following query deletes all rows from the Customers table.  
+DELETE FROM Customers;  
+GO
+The following SQL query deletes all rows from the Customers table where OrderID is greater than 1000. 
+DELETE FROM Customers WHERE OrderId > 1000;  
+GO  
+DELETE is a DML command.
+DELETE is executed using a row lock, each row in the table is locked for deletion.
+We can use where clauses with DELETE to filter & delete specific records.
+The DELETE command is used to remove rows from a table based on WHERE condition.
+It maintains the log, so it is slower than TRUNCATE.
+The DELETE statement removes rows one at a time and records an entry in the transaction log for each deleted row.
+Identity of column keep DELETE and retains the identity.
+To use Delete you need DELETE permission on the table.
+Delete uses more transaction space than the Truncate statement.
+The delete can be used with indexed views.
+DROP
+ 
+DROP table query removes one or more table definitions and all data, indexes, triggers, constraints, and permission specifications for those tables. DROP command requires to ALTER permission on the schema to which the table belongs, CONTROL permission on the table, or membership in the db_ddladmin fixed database role.
+ 
+The following SQL query drops the Customers table and its data and indexes from the current database. 
+DROP TABLE Customers ;  
+The DROP command removes a table from the database.
+All the tables' rows, indexes, and privileges will also be removed.
+No DML triggers will be fired.
+The operation cannot be rolled back.
+DROP and TRUNCATE are DDL commands, whereas DELETE is a DML command.
+DELETE operations can be rolled back (undone), while DROP and TRUNCATE operations cannot be rolled back
+ACID Properties of Transactions
+
+Most of what we're calling transactional locking relates to the ability of a database management system (DBMS) to ensure reliable transactions that adhere to these ACID properties. ACID is an acronym that stands for Atomicity, Consistency, Isolation, and Durability. Each of these properties is described in more detail below. However, all of these properties are related and must be considered together. They are more like different views of the same object than independent things.
+
+2.1.1 Atomicity
+Atomicity means all or nothing. Transactions often contain multiple separate actions. For example, a transaction may insert data into one table, delete from another table, and update a third table. Atomicity ensures that either all of these actions occur or none at all.
+2.1.2 Consistency
+Consistency means that transactions always take the database from one consistent state to another. So, if a transaction violates the databases consistency rules, then the entire transaction will be rolled back.
+
+2.1.3 Isolation
+Isolation means that concurrent transactions, and the changes made within them, are not visible to each other until they complete. This avoids many problems, including those that could lead to violation of other properties. The implementation of isolation is quite different in different DBMS'. This is also the property most often related to locking problems.
+
+2.1.4 Durability
+Durability means that committed transactions will not be lost, even in the event of abnormal termination. That is, once a user or program has been notified that a transaction was committed, they can be certain that the data will not be lost.
+
+CRUD
+In database programming, there are four basic and essential operations: create, read, update, and delete. These operations can be defined as the first step in database programming and are called CRUD operations. CRUD is an acronym of the CREATE, READ, UPDATE and DELETE words
+
+StoredProc vs Trigger
+A stored procedure is a group of SQL statements that is compiled one time, and then can be executed many times.
+
+Triggers are named database objects that are implicitly fired when a triggering event occurs.
+The trigger action can be run before or after the triggering event.
+Triggers are similar to stored procedures but differ in the way that they are invoked.
+A trigger is not called directly by a user, whereas a stored procedure is directly called by a user.
+
+What is the difference between a view and a stored procedure?
+View is simple showcasing data stored in the database tables whereas a stored procedure is a group of statements that can be executed. A view is faster as it displays data from the tables referenced whereas a stored procedure executes sql statements.
+
+5)What is a View?
+ A view in SQL is a virtual table based on the result-set of an SQL statement. A view contains rows and columns, just like a real table. The fields in a view are fields from one or more real tables in the database.
+6. What are all the different types of indexes?
+There are three types of indexes -.
+Unique Index.
+This indexing does not allow the field to have duplicate values if the column is uniquely indexed. Unique index can be applied automatically when the primary key is defined.
+Clustered Index.
+This type of index reorders the physical order of the table and search based on the key values. Each table can have only one clustered index.
+NonClustered Index.
+NonClustered Index does not alter the physical order of the table and maintains logical order of data. Each table can have 999 nonclustered indexes.
+17. What is a Cursor?
+A database Cursor is a control which enables traversal over the rows or records in the table. This can be viewed as a pointer to one row in a set of rows. Cursor is very much useful for traversing such as retrieval, addition and removal of database records.
+
+
+What are indexes? How can index affect performance of fetching data.
+What are Database normalization and how is that important for DB performance
+What are Primary Key and types of Primary Key
+
+Because a table can have only one primary key, you cannot add a primary key to a table that already has a primary key defined. To change the primary key of a table, delete the existing key using a DROP clause in an ALTER TABLE statement and add the new primary key.
+
+
+create primary key on existing table without primary key
+ALTER TABLE yourTableName ADD yourColumnName INT NOT NULL PRIMARY KEY IDENTITY(1, 1)
+
+What is a multicolumn index?
+Multicolumn indexes are indexes that store data on up to 32 columns. When creating a multicolumn index, the column order is very important. This is due to the structure that multicolumn indexes possess. Multicolumn indexes are structured to have a hierarchical structure. Take for example this table:
+
